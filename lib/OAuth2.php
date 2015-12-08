@@ -382,7 +382,7 @@ class OAuth2
      * @var string
      */
     const TRANSPORT_QUERY    = 'query';
-    const TRANSPORT_FRAGMENT = 'fragment';
+    const TRANSPORT_FRAGMENT = self::TRANSPORT_QUERY;
 
     /**
      * @}
