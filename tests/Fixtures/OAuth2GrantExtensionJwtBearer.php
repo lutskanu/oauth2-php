@@ -7,6 +7,7 @@ use OAuth2\IOAuth2GrantExtension;
 use OAuth2\OAuth2ServerException;
 use OAuth2\Model\IOAuth2Client;
 use OAuth2\Tests\Fixtures\OAuth2StorageStub;
+use Symfony\Component\HttpFoundation\Response;
 
 class OAuth2GrantExtensionJwtBearer extends OAuth2StorageStub implements IOAuth2GrantExtension
 {
@@ -15,7 +16,7 @@ class OAuth2GrantExtensionJwtBearer extends OAuth2StorageStub implements IOAuth2
     public function checkGrantExtension(IOAuth2Client $client, $uri, array $inputData, array $authHeaders)
     {
         if ('urn:ietf:params:oauth:grant-type:jwt-bearer' !== $uri) {
-            throw new OAuth2ServerException(OAuth2::HTTP_BAD_REQUEST, OAuth2::ERROR_UNSUPPORTED_GRANT_TYPE);
+            throw new OAuth2ServerException(Response::HTTP_BAD_REQUEST, OAuth2::ERROR_UNSUPPORTED_GRANT_TYPE);
         }
 
         if (!isset($inputData['jwt'])) {

@@ -46,7 +46,7 @@ class OAuth2ImplicitGrantTypeTest extends PHPUnit_Framework_TestCase
         $data = new \stdClass();
 
         try {
-            $response = $oauth2->finishClientAuthorization(false, $data, new Request(array(
+            $oauth2->finishClientAuthorization(false, $data, new Request(array(
                     'client_id' => 'blah',
                     'redirect_uri' => 'http://www.example.com/?foo=bar',
                     'state' => '42',

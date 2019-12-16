@@ -32,7 +32,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
      */
     public function testVerifyAccessTokenWithNoParam()
     {
-        $mockStorage = $this->getMock('OAuth2\IOAuth2Storage');
+        $mockStorage = $this->getMockBuilder('OAuth2\IOAuth2Storage')->getMock();
         $this->fixture = new OAuth2($mockStorage);
 
         $scope = null;
@@ -46,7 +46,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
     public function testVerifyAccessTokenInvalidToken()
     {
         // Set up the mock storage to say this token does not exist
-        $mockStorage = $this->getMock('OAuth2\IOAuth2Storage');
+        $mockStorage = $this->getMockBuilder('OAuth2\IOAuth2Storage')->getMock();
         $mockStorage->expects($this->once())
             ->method('getAccessToken')
             ->will($this->returnValue(false));
@@ -66,7 +66,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
     public function testVerifyAccessTokenMalformedToken(IOAuth2AccessToken $token)
     {
         // Set up the mock storage to say this token does not exist
-        $mockStorage = $this->getMock('OAuth2\IOAuth2Storage');
+        $mockStorage = $this->getMockBuilder('OAuth2\IOAuth2Storage')->getMock();
         $mockStorage->expects($this->once())
             ->method('getAccessToken')
             ->will($this->returnValue($token));
@@ -78,7 +78,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $this->fixture->verifyAccessToken($this->tokenId, $scope);
     }
 
-        /**
+    /**
      * Tests OAuth2->verifyAccessToken() with different expiry dates
      *
      * @dataProvider generateExpiryTokens
@@ -86,7 +86,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
     public function testVerifyAccessTokenCheckExpiry(IOAuth2AccessToken $token, $expectedToPass)
     {
         // Set up the mock storage to say this token does not exist
-        $mockStorage = $this->getMock('OAuth2\IOAuth2Storage');
+        $mockStorage = $this->getMockBuilder('OAuth2\IOAuth2Storage')->getMock();
         $mockStorage->expects($this->once())
             ->method('getAccessToken')
             ->will($this->returnValue($token));
@@ -106,7 +106,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         }
     }
 
-        /**
+    /**
      * Tests OAuth2->verifyAccessToken() with different scopes
      *
      * @dataProvider generateScopes
@@ -114,7 +114,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
     public function testVerifyAccessTokenCheckScope($scopeRequired, IOAuth2AccessToken $token, $expectedToPass)
     {
         // Set up the mock storage to say this token does not exist
-        $mockStorage = $this->getMock('OAuth2\IOAuth2Storage');
+        $mockStorage = $this->getMockBuilder('OAuth2\IOAuth2Storage')->getMock();
         $mockStorage->expects($this->once())
             ->method('getAccessToken')
             ->will($this->returnValue($token));
@@ -139,7 +139,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
      */
     public function testGrantAccessTokenMissingData($request)
     {
-        $mockStorage = $this->getMock('OAuth2\IOAuth2Storage');
+        $mockStorage = $this->getMockBuilder('OAuth2\IOAuth2Storage')->getMock();
         $this->fixture = new OAuth2($mockStorage);
 
         $this->setExpectedException('OAuth2\OAuth2ServerException');
@@ -153,7 +153,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
      */
     public function testGrantAccessTokenCheckClientCredentials()
     {
-        $mockStorage = $this->getMock('OAuth2\IOAuth2Storage');
+        $mockStorage = $this->getMockBuilder('OAuth2\IOAuth2Storage')->getMock();
         $mockStorage->expects($this->any())
             ->method('getClient')
             ->will($this->returnValue(new OAuth2Client('dev-abc')));
@@ -286,8 +286,6 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(true)); // Always return true for any combination of user/pass
 
         $inputData = array('grant_type' => OAuth2::GRANT_TYPE_AUTH_CODE, 'client_id' => 'a', 'client_secret' => 'b');
-        $fakeAuthCode = array('client_id' => $inputData['client_id'], 'redirect_uri' => '/foo', 'expires' => time() + 60);
-        $fakeAccessToken = array('access_token' => 'abcde');
 
         // Ensure redirect URI and auth-code is mandatory
         try {
@@ -368,7 +366,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         }
     }
 
-        /**
+    /**
      * Tests OAuth2->grantAccessToken() with checks the client ID is matched
      *
      */
@@ -400,7 +398,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         }
     }
 
-     /**
+    /**
      * Tests OAuth2->grantAccessToken() with same Auth code grant
      *
      */
@@ -412,7 +410,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
 
         $data = new \stdClass;
 
-        $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+        $oauth2->finishClientAuthorization(true, $data, new Request(array(
                 'client_id' => 'blah',
                 'redirect_uri' => 'http://www.example.com/?foo=bar',
                 'response_type' => 'code',
@@ -447,7 +445,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $this->fixture->grantAccessToken(/* parameters */);
     }
 
-        /**
+    /**
      * Tests OAuth2->grantAccessToken() with user credentials
      *
      */
@@ -484,7 +482,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $token = $stub->getLastAccessToken();
         $this->assertSame('cid', $token->getClientId());
         $this->assertSame($data, $token->getData());
-        $this->assertSame(null, $token->getScope());
+        $this->assertNull($token->getScope());
     }
 
     public function testGrantAccessTokenWithGrantUserWithAddScopeThrowsError()
@@ -497,7 +495,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $oauth2 = new OAuth2($stub);
 
         try {
-            $response = $oauth2->grantAccessToken(new Request(array(
+            $oauth2->grantAccessToken(new Request(array(
                 'grant_type' => 'password',
                 'client_id' => 'cid',
                 'client_secret' => 'cpass',
@@ -628,7 +626,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $oauth2 = new OAuth2($stub);
 
         try {
-            $response = $oauth2->grantAccessToken(new Request(array(
+            $oauth2->grantAccessToken(new Request(array(
                 'grant_type' => 'password',
                 'client_id' => 'cid',
                 'client_secret' => 'cpass',
@@ -643,7 +641,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         }
     }
 
-        /**
+    /**
      * Tests OAuth2->grantAccessToken() with client credentials
      *
      */
@@ -654,7 +652,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $this->fixture->grantAccessToken(/* parameters */);
     }
 
-        /**
+    /**
      * Tests OAuth2->grantAccessToken() with refresh token
      *
      */
@@ -811,11 +809,11 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         )));
 
         $this->assertSame(302, $response->getStatusCode());
-        $this->assertRegexp('#^http://www\.example\.com/\?foo=bar&state=42&code=#', $response->headers->get('location'));
+        $this->assertRegExp('#^http://www\.example\.com/\?foo=bar&state=42&code=#', $response->headers->get('location'));
 
         $code = $stub->getLastAuthCode();
         $this->assertSame('blah', $code->getClientId());
-        $this->assertSame(null, $code->getScope());
+        $this->assertNull($code->getScope());
         $this->assertSame($data, $code->getData());
     }
 
@@ -828,7 +826,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                 'redirect_uri' => 'http://www.example.com/?foo=bar',
                 'response_type' => 'code',
                 'state' => '42',
@@ -849,7 +847,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                 'client_id' => 'foo',
                 'redirect_uri' => 'http://www.example.com/?foo=bar',
                 'response_type' => 'code',
@@ -871,7 +869,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                 'client_id' => 'blah',
                 'response_type' => 'code',
                 'state' => '42',
@@ -892,7 +890,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                 'client_id' => 'blah',
                 'response_type' => 'code',
                 'state' => '42',
@@ -913,7 +911,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                 'client_id' => 'blah',
                 'response_type' => 'code',
                 'state' => '42',
@@ -934,7 +932,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                 'client_id' => 'blah',
                 'response_type' => 'code',
                 'state' => '42',
@@ -956,7 +954,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(
+            $oauth2->finishClientAuthorization(
                 true,
                 $data,
                 new Request(array(
@@ -982,7 +980,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                     'client_id' => 'blah',
                     'redirect_uri' => 'http://www.example.com/?foo=bar',
                     'state' => '42',
@@ -1003,7 +1001,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                     'client_id' => 'blah',
                     'redirect_uri' => 'http://www.example.com/?foo=bar',
                     'state' => '42',
@@ -1024,7 +1022,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                     'client_id' => 'blah',
                     'redirect_uri' => 'http://www.example.com/?foo=bar',
                     'state' => '42',
@@ -1045,7 +1043,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(true, $data, new Request(array(
+            $oauth2->finishClientAuthorization(true, $data, new Request(array(
                     'client_id' => 'blah',
                     'redirect_uri' => 'http://www.example.com/?foo=bar',
                     'state' => '42',
@@ -1067,7 +1065,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
         $data = new \stdClass;
 
         try {
-            $response = $oauth2->finishClientAuthorization(false, $data, new Request(array(
+            $oauth2->finishClientAuthorization(false, $data, new Request(array(
                     'client_id' => 'blah',
                     'redirect_uri' => 'http://www.example.com/?foo=bar',
                     'state' => '42',
@@ -1088,7 +1086,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
      */
     public function testGetBearerToken(Request $request, $token, $remove = false, $exception = null, $exceptionMessage = null, $headers = null, $body = null)
     {
-        $mock = $this->getMock('OAuth2\IOAuth2Storage');
+        $mock = $this->getMockBuilder('OAuth2\IOAuth2Storage')->getMock();
         $oauth2 = new OAuth2($mock);
 
         try {
@@ -1236,7 +1234,7 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
      */
     protected function createBaseMock($interfaceName)
     {
-        $mockStorage = $this->getMock($interfaceName);
+        $mockStorage = $this->getMockBuilder($interfaceName)->getMock();
         $mockStorage->expects($this->any())
             ->method('checkClientCredentials')
             ->will($this->returnValue(true)); // Always return true for any combination of user/pass
@@ -1286,8 +1284,6 @@ class OAuth2Test extends PHPUnit_Framework_TestCase
      */
     public function generateScopes()
     {
-        $baseToken = array('client_id' => 'blah', 'expires' => time() + 60);
-
         $token = function ($scope) {
             return new OAuth2AccessToken('blah', '', time() + 60, $scope);
         };

@@ -6,6 +6,7 @@ use OAuth2\OAuth2;
 use OAuth2\IOAuth2GrantExtension;
 use OAuth2\OAuth2ServerException;
 use OAuth2\Model\IOAuth2Client;
+use Symfony\Component\HttpFoundation\Response;
 
 class OAuth2GrantExtensionLifetimeStub extends OAuth2StorageStub implements IOAuth2GrantExtension
 {
@@ -14,7 +15,7 @@ class OAuth2GrantExtensionLifetimeStub extends OAuth2StorageStub implements IOAu
     public function checkGrantExtension(IOAuth2Client $client, $uri, array $inputData, array $authHeaders)
     {
         if ('http://company.com/fb_access_token_time_limited' !== $uri) {
-            throw new OAuth2ServerException(OAuth2::HTTP_BAD_REQUEST, OAuth2::ERROR_UNSUPPORTED_GRANT_TYPE);
+            throw new OAuth2ServerException(Response::HTTP_BAD_REQUEST, OAuth2::ERROR_UNSUPPORTED_GRANT_TYPE);
         }
 
         if (!isset($inputData['fb_access_token'])) {

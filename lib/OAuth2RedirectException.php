@@ -2,6 +2,8 @@
 
 namespace OAuth2;
 
+use Symfony\Component\HttpFoundation\Response;
+
 /**
  * Redirect the end-user's user agent with error message.
  *
@@ -37,7 +39,7 @@ class OAuth2RedirectException extends OAuth2ServerException
      */
     public function __construct($redirectUri, $error, $errorDescription = null, $state = null, $method = OAuth2::TRANSPORT_QUERY)
     {
-        parent::__construct(OAuth2::HTTP_FOUND, $error, $errorDescription);
+        parent::__construct(Response::HTTP_FOUND, $error, $errorDescription);
 
         $this->method = $method;
         $this->redirectUri = $redirectUri;
